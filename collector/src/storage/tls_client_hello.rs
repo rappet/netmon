@@ -1,7 +1,7 @@
-use nm_service::clickhouse;
-use nm_service::clickhouse::Row;
-use serde::{Deserialize, Serialize};
 use std::net::Ipv6Addr;
+
+use nm_service::{clickhouse, clickhouse::Row};
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 #[derive(Row, Serialize, Deserialize, Debug, PartialEq)]

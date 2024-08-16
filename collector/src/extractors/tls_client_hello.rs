@@ -1,8 +1,9 @@
-use nom::combinator::complete;
-use nom::multi::{length_data, many0};
-use nom::number::streaming::be_u16;
-use nom::IResult;
-
+use nom::{
+    combinator::complete,
+    multi::{length_data, many0},
+    number::streaming::be_u16,
+    IResult,
+};
 use tls_parser::{parse_tls_extensions, TlsExtension, TlsMessage, TlsMessageHandshake};
 
 const GREASE_TABLE: &[u16] = &[
@@ -133,8 +134,9 @@ pub fn parse_tls_extension_id(i: &[u8]) -> IResult<&[u8], u16> {
 
 #[cfg(test)]
 mod tests {
-    use crate::extractors::tls_client_hello::{extract_client_hello, ClientHelloMetadata};
     use pretty_assertions::assert_eq;
+
+    use crate::extractors::tls_client_hello::{extract_client_hello, ClientHelloMetadata};
 
     const EXAMPLE_PACKET: &[u8] = &[
         0x60, 0x0e, 0x5b, 0xda, 0x02, 0x25, 0x06, 0x40, 0x2a, 0x02, 0x30, 0x35, 0x0b, 0x16, 0xe2,

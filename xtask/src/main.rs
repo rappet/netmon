@@ -1,11 +1,14 @@
+use std::{
+    collections::BTreeMap,
+    fs::File,
+    io::{BufReader, Read, Write},
+    path::PathBuf,
+};
+
 use anyhow::Result;
 use clap::Parser;
 use ipnet::{Ipv4Net, Ipv6Net};
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeMap;
-use std::fs::File;
-use std::io::{BufReader, Read, Write};
-use std::path::PathBuf;
 use zip::ZipArchive;
 
 #[derive(Parser, Debug)]

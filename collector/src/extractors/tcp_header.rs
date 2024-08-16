@@ -1,10 +1,9 @@
-use bytes::Bytes;
-use pnet::packet::ip::IpNextHeaderProtocols;
-use pnet::packet::ipv4::Ipv4Packet;
-use pnet::packet::ipv6::Ipv6Packet;
-use pnet::packet::tcp::TcpPacket;
-use pnet::packet::Packet;
 use std::net::IpAddr;
+
+use bytes::Bytes;
+use pnet::packet::{
+    ip::IpNextHeaderProtocols, ipv4::Ipv4Packet, ipv6::Ipv6Packet, tcp::TcpPacket, Packet,
+};
 
 #[derive(Debug, PartialEq)]
 pub struct TcpMetadata {

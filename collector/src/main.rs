@@ -1,25 +1,30 @@
-use crate::extractors::tcp_header::TcpMetadata;
-use crate::extractors::tls_client_hello::extract_client_hello;
-use crate::opts::Opts;
-use crate::storage::tls_client_hello::StoredTlsClientHelloMetadata;
-use crate::storage::ClickhouseConnection;
+use std::net::{IpAddr, Ipv6Addr};
+
 use anyhow::{Context, Result};
 use bytes::Bytes;
 use chrono::{DateTime, Timelike, Utc};
 use clap::Parser;
-
-use nm_service::kafka_model::packet_sample::PacketSample;
-use nm_service::kafka_model::topics::{TCP_ACK, TLS_CLIENT_HELLO};
-use nm_service::rdkafka::config::RDKafkaLogLevel;
-use nm_service::rdkafka::consumer::{Consumer, StreamConsumer};
-use nm_service::rdkafka::{ClientConfig, Message};
-use prost::Message as _;
-use std::net::{IpAddr, Ipv6Addr};
-
-use tracing::{error, info, warn};
-
 use ip_lookup::IpDatabase;
+use nm_service::{
+    kafka_model::{
+        packet_sample::PacketSample,
+        topics::{TCP_ACK, TLS_CLIENT_HELLO},
+    },
+    rdkafka::{
+        config::RDKafkaLogLevel,
+        consumer::{Consumer, StreamConsumer},
+        ClientConfig, Message,
+    },
+};
+use prost::Message as _;
+use tracing::{error, info, warn};
 use uuid::{NoContext, Uuid};
+
+use crate::{
+    extractors::{tcp_header::TcpMetadata, tls_client_hello::extract_client_hello},
+    opts::Opts,
+    storage::{tls_client_hello::StoredTlsClientHelloMetadata, ClickhouseConnection},
+};
 
 mod extractors;
 mod opts;

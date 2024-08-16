@@ -1,25 +1,35 @@
 mod opts;
 
-use crate::opts::Opts;
+use std::{
+    io::ErrorKind,
+    time::{Duration, SystemTime, UNIX_EPOCH},
+};
+
 use anyhow::{bail, Context, Result};
 use bytes::Bytes;
 use clap::Parser;
-use kafka_model::packet_sample::PacketSample;
-use kafka_model::topics::{TCP_ACK, TLS_CLIENT_HELLO};
-use pnet::packet::ethernet::{EtherTypes, EthernetPacket};
-use pnet::packet::ip::{IpNextHeaderProtocol, IpNextHeaderProtocols};
-use pnet::packet::ipv4::Ipv4Packet;
-use pnet::packet::ipv6::Ipv6Packet;
-use pnet::packet::tcp::{TcpFlags, TcpPacket};
-use pnet::packet::Packet;
+use kafka_model::{
+    packet_sample::PacketSample,
+    topics::{TCP_ACK, TLS_CLIENT_HELLO},
+};
+use pnet::packet::{
+    ethernet::{EtherTypes, EthernetPacket},
+    ip::{IpNextHeaderProtocol, IpNextHeaderProtocols},
+    ipv4::Ipv4Packet,
+    ipv6::Ipv6Packet,
+    tcp::{TcpFlags, TcpPacket},
+    Packet,
+};
 use pnet_datalink::{pcap, Channel};
 use prost::Message;
-use rdkafka::producer::{BaseRecord, DefaultProducerContext, Producer, ThreadedProducer};
-use rdkafka::ClientConfig;
-use std::io::ErrorKind;
-use std::time::{Duration, SystemTime, UNIX_EPOCH};
+use rdkafka::{
+    producer::{BaseRecord, DefaultProducerContext, Producer, ThreadedProducer},
+    ClientConfig,
+};
 use tls_parser::{TlsMessage, TlsMessageHandshake};
 use tracing::debug;
+
+use crate::opts::Opts;
 
 #[tokio::main]
 async fn main() -> Result<()> {

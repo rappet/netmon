@@ -1,11 +1,14 @@
+use std::{
+    collections::{BTreeMap, HashMap},
+    net::IpAddr,
+    sync::Arc,
+    thread,
+    thread::{spawn, JoinHandle},
+};
+
 use ipnet::{Ipv4Net, Ipv6Net};
 use prefix_trie::PrefixMap;
 use serde::{Deserialize, Serialize};
-use std::collections::{BTreeMap, HashMap};
-use std::net::IpAddr;
-use std::sync::Arc;
-use std::thread;
-use std::thread::{spawn, JoinHandle};
 
 const IPV4_TO_ASN_RAW_BR: &[u8] = include_bytes!("ipv4_to_asn.bin.br");
 const IPV6_TO_ASN_RAW_BR: &[u8] = include_bytes!("ipv6_to_asn.bin.br");
@@ -97,10 +100,14 @@ impl IpDatabase {
 
 #[cfg(test)]
 mod tests {
-    use crate::{AsnMetadata, IpDatabase};
+    use std::{
+        net::{Ipv4Addr, Ipv6Addr},
+        str::FromStr,
+    };
+
     use pretty_assertions::assert_eq;
-    use std::net::{Ipv4Addr, Ipv6Addr};
-    use std::str::FromStr;
+
+    use crate::{AsnMetadata, IpDatabase};
 
     #[test]
     fn exists() {

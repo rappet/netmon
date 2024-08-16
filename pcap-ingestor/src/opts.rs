@@ -1,5 +1,6 @@
-use clap::Parser;
 use std::path::PathBuf;
+
+use clap::Parser;
 
 /// An evaluation/testing/debugging tool that
 /// extracts certain packets from a pcap and sends them to Kafka
