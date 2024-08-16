@@ -8,12 +8,12 @@ use bytes::Bytes;
 use chrono::{DateTime, Timelike, Utc};
 use clap::Parser;
 
-use kafka_model::packet_sample::PacketSample;
-use kafka_model::topics::{TCP_ACK, TLS_CLIENT_HELLO};
+use nm_service::kafka_model::packet_sample::PacketSample;
+use nm_service::kafka_model::topics::{TCP_ACK, TLS_CLIENT_HELLO};
+use nm_service::rdkafka::config::RDKafkaLogLevel;
+use nm_service::rdkafka::consumer::{Consumer, StreamConsumer};
+use nm_service::rdkafka::{ClientConfig, Message};
 use prost::Message as _;
-use rdkafka::config::RDKafkaLogLevel;
-use rdkafka::consumer::{Consumer, StreamConsumer};
-use rdkafka::{ClientConfig, Message};
 use std::net::{IpAddr, Ipv6Addr};
 
 use tracing::{error, info, warn};

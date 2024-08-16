@@ -2,12 +2,9 @@
 resolver = "2"
 
 members = [
-    "collector",
-    "pcap-ingestor",
-
-    "lib/ip-lookup",
+    "collector", "pcap-ingestor",
+    "lib/ip-lookup", "lib/nm-service",
     "kafka-model/rust",
-
     "xtask",
 ]
 

@@ -1,0 +1,15 @@
+[package]
+name = "nm-service"
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+version.workspace = true
+
+[features]
+queue = [ "rdkafka", "kafka-model" ]
+
+[dependencies]
+clickhouse = { version = "0.12.1", features = ["uuid", "rustls-tls", "time", "inserter"], optional = true }
+rdkafka = { version = "0.36.2", optional = true }
+kafka-model = { path = "../../kafka-model/rust", optional = true }

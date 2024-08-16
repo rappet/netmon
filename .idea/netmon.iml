@@ -7,6 +7,7 @@
       <sourceFolder url="file://$MODULE_DIR$/lib/ip-lookup/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/pcap-ingestor/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/xtask/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/lib/nm-service/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />

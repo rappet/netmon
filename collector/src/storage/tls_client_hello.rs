@@ -1,11 +1,12 @@
-use clickhouse::Row;
+use nm_service::clickhouse;
+use nm_service::clickhouse::Row;
 use serde::{Deserialize, Serialize};
 use std::net::Ipv6Addr;
 use uuid::Uuid;
 
 #[derive(Row, Serialize, Deserialize, Debug, PartialEq)]
 pub struct StoredTlsClientHelloMetadata {
-    #[serde(with = "clickhouse::serde::uuid")]
+    #[serde(with = "nm_service::clickhouse::serde::uuid")]
     pub uuid: Uuid,
     pub src_ip: Ipv6Addr,
     pub src_asn: u32,

@@ -1,7 +1,7 @@
 use crate::storage::tls_client_hello::StoredTlsClientHelloMetadata;
 use anyhow::Result;
-use clickhouse::inserter::Inserter;
-use clickhouse::Client;
+use nm_service::clickhouse::inserter::Inserter;
+use nm_service::clickhouse::Client;
 use std::time::Duration;
 
 pub(crate) mod tls_client_hello;
