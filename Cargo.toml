@@ -1,0 +1,19 @@
+[workspace]
+resolver = "2"
+
+members = [
+    "collector",
+    "pcap-ingestor",
+
+    "lib/ip-lookup",
+    "kafka-model/rust",
+
+    "xtask",
+]
+
+[workspace.package]
+authors = ["rappet <rappet@rappet.de>"]
+edition = "2021"
+repository = "https://github.com/rappet/netmon"
+license = "AGPL-3"
+version = "1.80.1"

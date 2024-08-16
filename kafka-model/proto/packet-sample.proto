@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package packet_sample;
+
+// Send when a packet is sampled by the shild
+//
+// Kafka topic is chosen depending on sample reason
+message PacketSample {
+  uint64 timestamp_ms = 1;
+  // Use the raw packet, so we can switch out analytics in the control plane
+  bytes ip_packet_raw = 2;
+
+}

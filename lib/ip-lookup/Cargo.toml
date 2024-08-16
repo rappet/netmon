@@ -1,0 +1,14 @@
+[package]
+name = "ip-lookup"
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+version.workspace = true
+
+[dependencies]
+bincode = "1.3.3"
+brotli = "6.0.0"
+ipnet = { version = "2.9.0", features = ["serde"] }
+prefix-trie = "0.4.2"
+serde = { version = "1.0.208", features = ["derive"] }

@@ -1,0 +1,14 @@
+[package]
+name = "kafka-model"
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+version.workspace = true
+
+[dependencies]
+bytes = "1.7.1"
+prost = "0.13.1"
+
+[build-dependencies]
+prost-build = "0.13.1"
