@@ -2,11 +2,5 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/collector" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/kafka-model/rust" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/ip-lookup" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/pcap-ingestor" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/pcap-ingestor/src" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/xtask" vcs="Git" />
   </component>
 </project>
