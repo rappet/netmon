@@ -12,3 +12,6 @@ brotli = "6.0.0"
 ipnet = { version = "2.9.0", features = ["serde"] }
 prefix-trie = "0.4.2"
 serde = { version = "1.0.208", features = ["derive"] }
+
+[dev-dependencies]
+pretty_assertions = "1.4.0"

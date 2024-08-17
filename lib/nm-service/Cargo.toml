@@ -15,3 +15,6 @@ kafka = [ "rdkafka", "kafka-model" ]
 clickhouse = { version = "0.12.1", features = ["uuid", "rustls-tls", "time", "inserter"], optional = true }
 rdkafka = { version = "0.36.2", optional = true }
 kafka-model = { path = "../../kafka-model/rust", optional = true }
+
+[dev-dependencies]
+pretty_assertions = "1.4.0"
