@@ -1,7 +1,6 @@
-mod opts;
-
 use std::{
     io::ErrorKind,
+    path::PathBuf,
     time::{SystemTime, UNIX_EPOCH},
 };
 
@@ -11,7 +10,7 @@ use kafka_model::{
     packet_sample::PacketSample,
     topics::{TCP_ACK, TLS_CLIENT_HELLO},
 };
-use nm_service::{clap::Parser, NMService};
+use nm_service::{clap, clap::Parser, LibOpts, NMService};
 use pnet::packet::{
     ethernet::{EtherTypes, EthernetPacket},
     ip::{IpNextHeaderProtocol, IpNextHeaderProtocols},
@@ -24,7 +23,17 @@ use pnet_datalink::{pcap, Channel};
 use tls_parser::{TlsMessage, TlsMessageHandshake};
 use tracing::debug;
 
-use crate::opts::Opts;
+/// An evaluation/testing/debugging tool that
+/// extracts certain packets from a pcap and sends them to Kafka
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+pub(crate) struct Opts {
+    #[arg(env)]
+    pub(crate) pcap_file: PathBuf,
+
+    #[command(flatten)]
+    pub lib_opts: LibOpts,
+}
 
 #[tokio::main]
 async fn main() -> Result<()> {

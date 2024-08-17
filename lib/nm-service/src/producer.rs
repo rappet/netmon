@@ -9,6 +9,7 @@ use rdkafka::{
 };
 use serde::Serialize;
 use tracing::{debug, info, warn};
+
 use crate::{opts::ProducerType, NMService};
 
 pub struct Producer {
@@ -26,7 +27,7 @@ impl Producer {
                 ProducerImplementation::Log {
                     topic: topic.to_owned(),
                 }
-            },
+            }
             ProducerType::File => unimplemented!(),
             ProducerType::Kafka => {
                 ProducerImplementation::Kafka(KafkaProducer::new(nm_service, topic)?)
