@@ -7,6 +7,7 @@ fn main() -> Result<()> {
     Config::default()
         .bytes(["."])
         .out_dir("src/generated")
+        .message_attribute(".", "#[derive(::serde::Serialize, ::serde::Deserialize)]")
         .compile_protos(&["../proto/packet-sample.proto"], &["../proto/"])?;
     Ok(())
 }

@@ -1,0 +1,96 @@
+//! Module for sending data to Kafka topics, files or just stdout
+
+use std::fmt::Debug;
+
+use anyhow::{Context, Result};
+use rdkafka::{
+    producer::{BaseRecord, DefaultProducerContext, ThreadedProducer},
+    ClientConfig,
+};
+use serde::Serialize;
+use tracing::{debug, info, warn};
+use crate::{opts::ProducerType, NMService};
+
+pub struct Producer {
+    inner: ProducerImplementation,
+}
+
+impl Producer {
+    pub(crate) async fn new(nm_service: &NMService, topic: &str) -> Result<Self> {
+        let inner = match nm_service.opts.producer_type {
+            ProducerType::Log => {
+                warn!(
+                    topic,
+                    "created new producer in log mode, please set log level at least to debug"
+                );
+                ProducerImplementation::Log {
+                    topic: topic.to_owned(),
+                }
+            },
+            ProducerType::File => unimplemented!(),
+            ProducerType::Kafka => {
+                ProducerImplementation::Kafka(KafkaProducer::new(nm_service, topic)?)
+            }
+        };
+
+        Ok(Self { inner })
+    }
+
+    pub async fn send<M>(&self, key: &str, message: &M) -> Result<()>
+    where
+        M: Debug + Serialize + prost::Message,
+    {
+        match &self.inner {
+            ProducerImplementation::Log { topic } => {
+                debug!(topic, key, "{message:?}");
+                Ok(())
+            }
+            ProducerImplementation::Kafka(kafka) => {
+                kafka.send(key.as_ref(), &message.encode_to_vec()).await
+            }
+        }
+    }
+}
+
+pub enum ProducerImplementation {
+    Log { topic: String },
+    Kafka(KafkaProducer),
+}
+
+pub struct KafkaProducer {
+    topic: String,
+    producer: ThreadedProducer<DefaultProducerContext>,
+}
+
+impl KafkaProducer {
+    fn new(nm_service: &NMService, topic: &str) -> Result<Self> {
+        let opts = &nm_service.opts;
+        let producer = ClientConfig::new()
+            .set("bootstrap.servers", &opts.kafka_bootstrap_servers)
+            .set(
+                "message.timeout.ms",
+                opts.kafka_message_timeout_ms.to_string(),
+            )
+            .set("batch.size", "100000")
+            .set("linger.ms", "100")
+            .set("compression.type", "lz4")
+            .set("acks", "1")
+            .create()
+            .context("Kafka producer creation error")?;
+
+        info!(topic, boostrap_servers = ?opts.kafka_bootstrap_servers, "registered new Kafka producer");
+        Ok(Self {
+            topic: topic.to_owned(),
+            producer,
+        })
+    }
+
+    async fn send(&self, key: &str, payload: &[u8]) -> Result<()> {
+        let _delivery_status = self.producer.send(
+            BaseRecord::<str, [u8]>::to(&self.topic)
+                .key(key)
+                .payload(payload),
+        );
+        Ok(())
+    }
+}

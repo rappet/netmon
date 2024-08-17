@@ -2,6 +2,7 @@
 /// Send when a packet is sampled by the shild
 ///
 /// Kafka topic is chosen depending on sample reason
+#[derive(::serde::Serialize, ::serde::Deserialize)]
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PacketSample {

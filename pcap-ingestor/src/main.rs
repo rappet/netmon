@@ -2,16 +2,16 @@ mod opts;
 
 use std::{
     io::ErrorKind,
-    time::{Duration, SystemTime, UNIX_EPOCH},
+    time::{SystemTime, UNIX_EPOCH},
 };
 
 use anyhow::{bail, Context, Result};
 use bytes::Bytes;
-use clap::Parser;
 use kafka_model::{
     packet_sample::PacketSample,
     topics::{TCP_ACK, TLS_CLIENT_HELLO},
 };
+use nm_service::{clap::Parser, NMService};
 use pnet::packet::{
     ethernet::{EtherTypes, EthernetPacket},
     ip::{IpNextHeaderProtocol, IpNextHeaderProtocols},
@@ -21,11 +21,6 @@ use pnet::packet::{
     Packet,
 };
 use pnet_datalink::{pcap, Channel};
-use prost::Message;
-use rdkafka::{
-    producer::{BaseRecord, DefaultProducerContext, Producer, ThreadedProducer},
-    ClientConfig,
-};
 use tls_parser::{TlsMessage, TlsMessageHandshake};
 use tracing::debug;
 
@@ -33,24 +28,11 @@ use crate::opts::Opts;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    tracing_subscriber::fmt::init();
-
     let opts = Opts::parse();
+    let svc = NMService::init(&opts.lib_opts);
 
-    debug!("connecting to Kafka");
-
-    let producer: &ThreadedProducer<DefaultProducerContext> = &ClientConfig::new()
-        .set("bootstrap.servers", &opts.kafka_bootstrap_servers)
-        .set(
-            "message.timeout.ms",
-            opts.kafka_message_timeout_ms.to_string(),
-        )
-        .set("batch.size", "100000")
-        .set("linger.ms", "100")
-        .set("compression.type", "lz4")
-        .set("acks", "1")
-        .create()
-        .expect("Producer creation error");
+    let tcp_ack_producer = svc.create_producer(TCP_ACK).await?;
+    let tls_client_hello_producer = svc.create_producer(TLS_CLIENT_HELLO).await?;
 
     let mut packet_receiver = match pcap::from_file(&opts.pcap_file, pcap::Config::default())? {
         Channel::Ethernet(_sender, receiver) => receiver,
@@ -78,9 +60,9 @@ async fn main() -> Result<()> {
                 .context("UNIX time millis does not fit in u32")?;
             let timestamp_ms_string = timestamp_ms.to_string();
 
-            let topic = match extraction_type {
-                ExtractionType::TcpAck => TCP_ACK,
-                ExtractionType::TlsClientHello => TLS_CLIENT_HELLO,
+            let producer = match extraction_type {
+                ExtractionType::TcpAck => &tcp_ack_producer,
+                ExtractionType::TlsClientHello => &tls_client_hello_producer,
             };
 
             let payload = PacketSample {
@@ -88,17 +70,11 @@ async fn main() -> Result<()> {
                 ip_packet_raw: ip_packet,
                 ..PacketSample::default()
             };
-            let encoded_payload = payload.encode_to_vec();
-            let delivery_status = producer.send(
-                BaseRecord::<str, [u8]>::to(topic)
-                    .key(&timestamp_ms_string)
-                    .payload(&encoded_payload),
-            );
-            debug!(?delivery_status, "detected TCP ACK packet");
+            producer.send(&timestamp_ms_string, &payload).await?;
         }
     }
 
-    producer.flush(Duration::from_secs(10))?;
+    // TODO: flush
 
     Ok(())
 }
@@ -154,18 +130,16 @@ fn handle_ip_payload(
             .contains(&flags)
             {
                 return None;
-            } else {
-                if let Ok((_rest, plaintext)) =
-                    tls_parser::parse_tls_plaintext(tcp_packet.payload())
-                {
-                    if plaintext.msg.iter().any(|message| {
-                        matches!(
-                            message,
-                            TlsMessage::Handshake(TlsMessageHandshake::ClientHello(_))
-                        )
-                    }) {
-                        return Some(ExtractionType::TlsClientHello);
-                    }
+            } else if let Ok((_rest, plaintext)) =
+                tls_parser::parse_tls_plaintext(tcp_packet.payload())
+            {
+                if plaintext.msg.iter().any(|message| {
+                    matches!(
+                        message,
+                        TlsMessage::Handshake(TlsMessageHandshake::ClientHello(_))
+                    )
+                }) {
+                    return Some(ExtractionType::TlsClientHello);
                 }
             }
         }

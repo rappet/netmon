@@ -303,6 +303,9 @@ name = "bytes"
 version = "1.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8318a53db07bb3f8dca91a600466bdb3f2eaadeedfdbcf02e1accbad9271ba50"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "bzip2"
@@ -1165,6 +1168,7 @@ dependencies = [
  "bytes",
  "prost",
  "prost-build",
+ "serde",
 ]
 
 [[package]]
@@ -1388,10 +1392,16 @@ checksum = "defc4c55412d89136f966bbb339008b474350e5e6e78d2714439c386b3137a03"
 name = "nm-service"
 version = "1.80.1"
 dependencies = [
+ "anyhow",
+ "clap",
  "clickhouse",
  "kafka-model",
  "pretty_assertions",
+ "prost",
  "rdkafka",
+ "serde",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]
@@ -1575,8 +1585,8 @@ dependencies = [
  "anyhow",
  "bytes",
  "chrono",
- "clap",
  "kafka-model",
+ "nm-service",
  "pnet",
  "pnet_datalink",
  "prost",
@@ -1585,7 +1595,6 @@ dependencies = [
  "tls-parser",
  "tokio",
  "tracing",
- "tracing-subscriber",
 ]
 
 [[package]]

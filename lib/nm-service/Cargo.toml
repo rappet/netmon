@@ -15,6 +15,12 @@ kafka = [ "rdkafka", "kafka-model" ]
 clickhouse = { version = "0.12.1", features = ["uuid", "rustls-tls", "time", "inserter"], optional = true }
 rdkafka = { version = "0.36.2", optional = true }
 kafka-model = { path = "../../kafka-model/rust", optional = true }
+clap = { version = "4.5.16", features = ["derive", "env"] }
+anyhow = "1.0.86"
+prost = { version = "0.13.1", default-features = false, features = ["std"] }
+serde = { version = "1.0.208", features = ["derive"] }
+tracing-subscriber = "0.3.18"
+tracing = "0.1.40"
 
 [dev-dependencies]
 pretty_assertions = "1.4.0"
