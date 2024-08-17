@@ -5,15 +5,21 @@ use std::{
     path::PathBuf,
 };
 
-use anyhow::Result;
-use clap::Parser;
+use anyhow::{ensure, Result};
+use clap::{arg, Parser};
 use ipnet::{Ipv4Net, Ipv6Net};
 use serde::{Deserialize, Serialize};
 use zip::ZipArchive;
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
-/// Converts data from https://github.com/ipverse/asn-ip to a more compact format
+/// Converts data from <https://github.com/ipverse/asn-ip> to a more compact format.
+///
+/// WARNING:
+/// There is currently a bug in the used ZIP reading library that limits the count
+/// of the files in the archive to 65535.
+/// If the archive contains more files, they will just be truncated without warning.
+/// Delete all .txt files before importing as a temporary fix.
 pub(crate) struct Opts {
     #[arg(long, env)]
     pub(crate) input_archive: PathBuf,
@@ -53,6 +59,11 @@ fn main() -> Result<()> {
     let opts = Opts::parse();
 
     let mut archive = ZipArchive::new(BufReader::new(File::open(&opts.input_archive)?))?;
+
+    ensure!(
+        archive.len() != 65535,
+        "Archive file count is exatly 65535, with a very high probability this is a bug. Read the description of the help command"
+    );
 
     let mut ipv4_to_asn: BTreeMap<Ipv4Net, u32> = BTreeMap::new();
     let mut ipv6_to_asn: BTreeMap<Ipv6Net, u32> = BTreeMap::new();

@@ -110,9 +110,8 @@ mod tests {
     use crate::{AsnMetadata, IpDatabase};
 
     #[test]
-    fn exists() {
+    fn goodle_dns_exists() {
         let database = IpDatabase::from_static();
-
         assert_eq!(
             database
                 .lookup(Ipv4Addr::new(8, 8, 8, 8))
@@ -124,7 +123,11 @@ mod tests {
                 description: Some("Google LLC".to_owned()),
             }
         );
+    }
 
+    #[test]
+    fn quad9_exists() {
+        let database = IpDatabase::from_static();
         assert_eq!(
             database
                 .lookup(Ipv4Addr::new(9, 9, 9, 9))
@@ -136,7 +139,11 @@ mod tests {
                 description: Some("Quad9".to_owned()),
             }
         );
+    }
 
+    #[test]
+    fn cloudflare_dns_exists() {
+        let database = IpDatabase::from_static();
         assert_eq!(
             database
                 .lookup(Ipv4Addr::new(1, 1, 1, 1))
@@ -148,7 +155,11 @@ mod tests {
                 description: Some("Cloudflare, Inc.".to_owned()),
             }
         );
+    }
 
+    #[test]
+    fn google_dns_v6_exists() {
+        let database = IpDatabase::from_static();
         assert_eq!(
             database
                 .lookup(Ipv6Addr::from_str("2001:4860:4860::8888").expect("IPv6 parsed valid"))
@@ -160,7 +171,11 @@ mod tests {
                 description: Some("Google LLC".to_owned()),
             }
         );
+    }
 
+    #[test]
+    fn quad9_v6_exists() {
+        let database = IpDatabase::from_static();
         assert_eq!(
             database
                 .lookup(Ipv6Addr::from_str("2620:fe::9").expect("IPv6 parsed valid"))
@@ -172,7 +187,11 @@ mod tests {
                 description: Some("Quad9".to_owned()),
             }
         );
+    }
 
+    #[test]
+    fn cloudflare_dns_v6_exists() {
+        let database = IpDatabase::from_static();
         assert_eq!(
             database
                 .lookup(Ipv6Addr::from_str("2606:4700:4700::1111").expect("IPv6 parsed valid"))
@@ -182,6 +201,22 @@ mod tests {
                 asn: 13335,
                 handle: Some("CLOUDFLARENET".to_owned()),
                 description: Some("Cloudflare, Inc.".to_owned()),
+            }
+        );
+    }
+
+    #[test]
+    fn rappet_personal_asn_exists() {
+        let database = IpDatabase::from_static();
+        assert_eq!(
+            database
+                .lookup(Ipv6Addr::from_str("2a0e:46c6::2").expect("IPv6 parsed valid"))
+                .expect("Cloudflare DNS exists")
+                .as_ref(),
+            &AsnMetadata {
+                asn: 207968,
+                handle: Some("RAPPET".to_owned()),
+                description: Some("Raphael Romeo Peters".to_owned()),
             }
         );
     }
