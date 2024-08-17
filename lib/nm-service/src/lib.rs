@@ -1,8 +1,10 @@
+mod producer;
+
 #[cfg(feature = "clickhouse")]
 pub use clickhouse;
-#[cfg(feature = "queue")]
+#[cfg(feature = "kafka")]
 pub use kafka_model;
-#[cfg(feature = "queue")]
+#[cfg(feature = "kafka")]
 pub use rdkafka;
 
 #[cfg(test)]

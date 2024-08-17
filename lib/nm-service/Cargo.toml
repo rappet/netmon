@@ -7,7 +7,9 @@ license.workspace = true
 version.workspace = true
 
 [features]
-queue = [ "rdkafka", "kafka-model" ]
+producer = [ "kafka" ]
+consumer = [ "kafka" ]
+kafka = [ "rdkafka", "kafka-model" ]
 
 [dependencies]
 clickhouse = { version = "0.12.1", features = ["uuid", "rustls-tls", "time", "inserter"], optional = true }
