@@ -21,6 +21,7 @@ prost = { version = "0.13.1", default-features = false, features = ["std"] }
 serde = { version = "1.0.208", features = ["derive"] }
 tracing-subscriber = "0.3.18"
 tracing = "0.1.40"
+tokio = { version = "1.39.3", features = ["full"] }
 
 [dev-dependencies]
 pretty_assertions = "1.4.0"

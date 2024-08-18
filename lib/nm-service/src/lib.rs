@@ -1,3 +1,4 @@
+pub use anyhow::{bail, ensure, Context, Error, Result};
 pub use clap;
 #[cfg(feature = "clickhouse")]
 pub use clickhouse;
@@ -5,12 +6,13 @@ pub use clickhouse;
 pub use kafka_model;
 #[cfg(feature = "kafka")]
 pub use rdkafka;
+pub use tokio;
+pub use tracing::{debug, error, info, warn};
 
 mod opts;
 #[cfg(feature = "producer")]
 pub mod producer;
 
-use anyhow::Result;
 pub use opts::LibOpts;
 
 use crate::producer::Producer;

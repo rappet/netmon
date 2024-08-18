@@ -4,13 +4,17 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 
-use anyhow::{bail, Context, Result};
 use bytes::Bytes;
-use kafka_model::{
-    packet_sample::PacketSample,
-    topics::{TCP_ACK, TLS_CLIENT_HELLO},
+use nm_service::{
+    bail, clap,
+    clap::Parser,
+    debug,
+    kafka_model::{
+        packet_sample::PacketSample,
+        topics::{TCP_ACK, TLS_CLIENT_HELLO},
+    },
+    tokio, Context, LibOpts, NMService, Result,
 };
-use nm_service::{clap, clap::Parser, LibOpts, NMService};
 use pnet::packet::{
     ethernet::{EtherTypes, EthernetPacket},
     ip::{IpNextHeaderProtocol, IpNextHeaderProtocols},
@@ -21,7 +25,6 @@ use pnet::packet::{
 };
 use pnet_datalink::{pcap, Channel};
 use tls_parser::{TlsMessage, TlsMessageHandshake};
-use tracing::debug;
 
 /// An evaluation/testing/debugging tool that
 /// extracts certain packets from a pcap and sends them to Kafka
