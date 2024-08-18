@@ -5,9 +5,11 @@
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DnsReverseRecord {
     #[prost(uint32, tag = "1")]
+    #[serde(with = "crate::serde::timestamp_seconds", rename = "timestamp")]
     pub timestamp_seconds: u32,
     /// / IP address, IPv6 mapped in case of IPv4
     #[prost(bytes = "bytes", tag = "2")]
+    #[serde(with = "crate::serde::ip_addr")]
     pub ip_addr: ::prost::bytes::Bytes,
     #[prost(string, repeated, tag = "3")]
     pub ptr_records: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,

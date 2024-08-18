@@ -1291,6 +1291,7 @@ name = "kafka-model"
 version = "1.80.1"
 dependencies = [
  "bytes",
+ "chrono",
  "prost",
  "prost-build",
  "serde",
@@ -1563,6 +1564,7 @@ dependencies = [
  "prost",
  "rdkafka",
  "serde",
+ "simd-json",
  "tokio",
  "tracing",
  "tracing-subscriber",

@@ -9,6 +9,11 @@ use rdkafka::{
     ClientConfig,
 };
 use serde::Serialize;
+use tokio::{
+    fs::File,
+    io::{AsyncWriteExt, BufWriter},
+    sync::Mutex,
+};
 use tracing::{debug, info, warn};
 
 use crate::{opts::ProducerType, NMService};
@@ -29,7 +34,14 @@ impl Producer {
                     topic: topic.to_owned(),
                 }
             }
-            ProducerType::File => unimplemented!(),
+            ProducerType::File => ProducerImplementation::File {
+                writer: {
+                    let path = format!("streams/{topic}.json");
+                    Mutex::new(BufWriter::new(File::create_new(&path).await.with_context(
+                        || format!("failed creating producer output file {path:?}"),
+                    )?))
+                },
+            },
             #[cfg(feature = "kafka")]
             ProducerType::Kafka => {
                 ProducerImplementation::Kafka(KafkaProducer::new(nm_service, topic)?)
@@ -48,10 +60,30 @@ impl Producer {
                 debug!(topic, key, "{message:?}");
                 Ok(())
             }
+            ProducerImplementation::File { writer } => {
+                let mut guard = writer.lock().await;
+                let mut serialized =
+                    simd_json::to_string(message).context("failed serializing message")?;
+                serialized.push('\n');
+                guard.write_all(serialized.as_bytes()).await?;
+                Ok(())
+            }
             #[cfg(feature = "kafka")]
             ProducerImplementation::Kafka(kafka) => {
                 kafka.send(key.as_ref(), &message.encode_to_vec()).await
             }
+        }
+    }
+
+    pub async fn flush(&self) -> Result<()> {
+        match &self.inner {
+            ProducerImplementation::Log { .. } => Ok(()),
+            ProducerImplementation::File { writer } => {
+                writer.lock().await.flush().await?;
+                Ok(())
+            }
+            #[cfg(feature = "kafka")]
+            ProducerImplementation::Kafka(producer) => producer.flush().await,
         }
     }
 }
@@ -59,6 +91,9 @@ impl Producer {
 pub enum ProducerImplementation {
     Log {
         topic: String,
+    },
+    File {
+        writer: Mutex<BufWriter<File>>,
     },
     #[cfg(feature = "kafka")]
     Kafka(KafkaProducer),
@@ -100,6 +135,11 @@ impl KafkaProducer {
                 .key(key)
                 .payload(payload),
         );
+        Ok(())
+    }
+
+    async fn flush(&self) -> Result<()> {
+        self.flush().await?;
         Ok(())
     }
 }

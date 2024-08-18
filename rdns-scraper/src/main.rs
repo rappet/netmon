@@ -40,22 +40,19 @@ async fn main() -> Result<()> {
             .try_into()
             .context("timestamp to large")?;
 
-        let record = match resolver.reverse_lookup(addr.into()).await {
-            Ok(res) => DnsReverseRecord {
-                timestamp_seconds: timestamp,
-                ip_addr: addr_encoded,
-                ptr_records: res.into_iter().map(|ptr| ptr.to_string()).collect(),
-                no_record: true,
-            },
+        let (ptr_records, no_record) = match resolver.reverse_lookup(addr.into()).await {
+            Ok(res) => (res.into_iter().map(|ptr| ptr.to_string()).collect(), false),
             Err(err) if matches!(err.kind(), &ResolveErrorKind::NoRecordsFound { .. }) => {
-                DnsReverseRecord {
-                    timestamp_seconds: timestamp,
-                    ip_addr: addr_encoded,
-                    ptr_records: vec![],
-                    no_record: true,
-                }
+                (vec![], true)
             }
             Err(err) => return Err(err.into()),
+        };
+
+        let record = DnsReverseRecord {
+            timestamp_seconds: timestamp,
+            ip_addr: addr_encoded,
+            ptr_records,
+            no_record,
         };
 
         let mut truncated_addr = addr.octets();
@@ -64,6 +61,8 @@ async fn main() -> Result<()> {
             .send(&Ipv4Addr::from(truncated_addr).to_string(), &record)
             .await?;
     }
+
+    producer.flush().await?;
 
     Ok(())
 }

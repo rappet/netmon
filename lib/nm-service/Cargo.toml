@@ -22,6 +22,7 @@ serde = { version = "1.0.208", features = ["derive"] }
 tracing-subscriber = "0.3.18"
 tracing = "0.1.40"
 tokio = { version = "1.39.3", features = ["full"] }
+simd-json = "0.13.10"
 
 [dev-dependencies]
 pretty_assertions = "1.4.0"

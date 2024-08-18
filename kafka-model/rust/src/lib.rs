@@ -1,4 +1,5 @@
 mod generated;
+pub(crate) mod serde;
 
 pub use generated::*;
 
