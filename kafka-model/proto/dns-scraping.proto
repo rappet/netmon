@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package dns_scraping;
+
+// Scraped PTR record
+message DNSReverseRecord {
+  uint32 timestamp_seconds = 1;
+  /// IP address, IPv6 mapped in case of IPv4
+  bytes ip_addr = 2;
+  repeated string ptr_records = 3;
+  // true if no record was available
+  bool no_record = 4;
+}

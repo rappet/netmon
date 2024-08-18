@@ -3,6 +3,7 @@
 use std::fmt::Debug;
 
 use anyhow::{Context, Result};
+#[cfg(feature = "kafka")]
 use rdkafka::{
     producer::{BaseRecord, DefaultProducerContext, ThreadedProducer},
     ClientConfig,
@@ -29,6 +30,7 @@ impl Producer {
                 }
             }
             ProducerType::File => unimplemented!(),
+            #[cfg(feature = "kafka")]
             ProducerType::Kafka => {
                 ProducerImplementation::Kafka(KafkaProducer::new(nm_service, topic)?)
             }
@@ -46,6 +48,7 @@ impl Producer {
                 debug!(topic, key, "{message:?}");
                 Ok(())
             }
+            #[cfg(feature = "kafka")]
             ProducerImplementation::Kafka(kafka) => {
                 kafka.send(key.as_ref(), &message.encode_to_vec()).await
             }
@@ -54,15 +57,20 @@ impl Producer {
 }
 
 pub enum ProducerImplementation {
-    Log { topic: String },
+    Log {
+        topic: String,
+    },
+    #[cfg(feature = "kafka")]
     Kafka(KafkaProducer),
 }
 
+#[cfg(feature = "kafka")]
 pub struct KafkaProducer {
     topic: String,
     producer: ThreadedProducer<DefaultProducerContext>,
 }
 
+#[cfg(feature = "kafka")]
 impl KafkaProducer {
     fn new(nm_service: &NMService, topic: &str) -> Result<Self> {
         let opts = &nm_service.opts;

@@ -2,7 +2,7 @@
 resolver = "2"
 
 members = [
-    "collector", "pcap-ingestor",
+    "collector", "pcap-ingestor", "rdns-scraper",
     "lib/ip-lookup", "lib/nm-service",
     "kafka-model/rust",
     "xtask",

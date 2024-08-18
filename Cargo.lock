@@ -2195,6 +2195,8 @@ dependencies = [
 name = "rdns-scraper"
 version = "1.80.1"
 dependencies = [
+ "bytes",
+ "chrono",
  "hickory-resolver",
  "ipnetwork",
  "nm-service",

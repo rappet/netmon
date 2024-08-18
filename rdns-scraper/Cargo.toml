@@ -1,0 +1,14 @@
+[package]
+name = "rdns-scraper"
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+version.workspace = true
+
+[dependencies]
+chrono = "0.4.38"
+hickory-resolver = { version = "0.24.1", features = ["dns-over-native-tls"] }
+ipnetwork = "0.20.0"
+nm-service = { path = "../lib/nm-service", features = ["producer"] }
+bytes = "1.7.1"

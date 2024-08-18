@@ -2,7 +2,6 @@ pub use anyhow::{bail, ensure, Context, Error, Result};
 pub use clap;
 #[cfg(feature = "clickhouse")]
 pub use clickhouse;
-#[cfg(feature = "kafka")]
 pub use kafka_model;
 #[cfg(feature = "kafka")]
 pub use rdkafka;

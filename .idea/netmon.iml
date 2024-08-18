@@ -8,6 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/pcap-ingestor/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/xtask/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/lib/nm-service/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rdns-scraper/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />

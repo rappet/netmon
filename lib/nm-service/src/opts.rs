@@ -47,5 +47,6 @@ pub enum ProducerType {
     #[default]
     File,
     /// Connect to a Kafka cluster and send Protobuf
+    #[cfg(feature = "kafka")]
     Kafka,
 }
